@@ -23,16 +23,18 @@ upload-image:
 # loads the image and installs the service with overrides
 deploy:
 	make upload-image
-	@helm install sample-service ./helm/sample-service --set service.type=NodePort --set service.port=31234
+	@helm install sample-service ./helm/sample-service --set service.type=NodePort --set service.nodePort=31234
 
 undeploy:
 	helm delete sample-service
 
-node_port=$(shell kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services ins-policy-service)
+node_port=$(shell kubectl get --namespace default -o jsonpath="{.spec.ports[0].nodePort}" services sample-service)
 node_ip=$(shell kubectl get nodes --namespace default -o jsonpath="{.items[0].status.addresses[0].address}")
-	
-url:
-	@echo http://${node_ip}:${node_port}
+
+# returns the node url to access from external world	
+node-url:
+	@echo "http://${node_ip}:${node_port}" 
+	@ echo "[[ NOTE: If using macOS, use http://localhost:8080 , made possible by k8s-cluster-config.yaml extraPortMappings ]]"
 
 status:
 	@kubectl get pods
