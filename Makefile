@@ -14,7 +14,7 @@ delete-all:
 	kind delete cluster --name local-dev 
 
 build-image:
-	docker build . -t sample-service
+	docker build ./sample-service -t sample-service
 
 # Load image to local kind registry
 upload-image:
